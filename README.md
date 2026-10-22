@@ -7,16 +7,11 @@ A habit and milestone countdown calendar built with pure **HTML, CSS, and Vanill
 ## ✨ Features
 
 - **❌ Bold Red Marker Cross:** Click any day to slash it with an authentic red marker cross (`✕`) when you finish your daily mission.
-- **🎯 22 February 2027 Target Countdown:** Live tracker showing exactly how many days remain until your deadline.
-- **🔒 Target Boundary Protection:** Any date beyond 22 Feb 2027 is locked to keep your focus strictly on the goal.
-- **🔥 Streaks & Progress Analytics:**
-  - Current unbroken streak counter
-  - Best streak record
-  - Total days completed
-  - Overall mission completion percentage bar
+- **🎯 Target Deadline Countdown (Default: 22 Feb 2027):** Live tracker showing days remaining until your deadline.
+- **🚀 Flexible Horizons:** Allows crossing off days beyond the deadline without restriction, and lets you set a new target date anytime!
 - **📅 Dual Calendar Views:**
-  - **Month View:** Classic monthly calendar with smooth navigation, "Today" quick jump, and "Go to Feb 2027" shortcut.
-  - **Wall Roadmap (All Months):** Master wall grid displaying every month leading up to 22 Feb 2027 so you can see your entire journey at a glance.
+  - **Month View:** Classic monthly calendar with smooth navigation, "Today" quick jump, and "Go to Target" shortcut.
+  - **Wall Roadmap (All Months):** Master wall grid displaying months leading up to and beyond your target so you can see your entire journey at a glance.
 - **📝 Daily Tasks & Reflection Notes:** Click the pencil icon (`✎`) on any date to break down specific sub-tasks or journal your daily thoughts.
 - **🔊 Felt-Tip Marker Audio FX:** Satisfying synthesized marker stroke sound when crossing off days (works completely offline, toggleable).
 - **🎉 Confetti Celebration:** Instant celebratory burst whenever you mark today complete!

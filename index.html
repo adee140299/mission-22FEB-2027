@@ -21,7 +21,7 @@
           </div>
           <div>
             <h1>Daily Mission Calendar</h1>
-            <p class="subtitle">Cross off every single day until <strong>22 February 2027</strong></p>
+            <p class="subtitle">Cross off every single day until <strong id="subtitleTargetText">22 February 2027</strong></p>
           </div>
         </div>
 
@@ -46,9 +46,15 @@
 
       <!-- Live Countdown & Stat Counters -->
       <div class="stats-ribbon">
-        <div class="stat-card target-card">
-          <div class="stat-label">🎯 Target Deadline</div>
-          <div class="stat-value highlight-red">22 Feb 2027</div>
+        <div class="stat-card target-card" id="targetCard" style="cursor: pointer;" title="Click to change target date">
+          <div class="stat-header-flex">
+            <div class="stat-label">🎯 Target Deadline</div>
+            <button id="editTargetBtn" class="btn-subtle-edit" title="Change Target Date" aria-label="Change target date">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              <span>Edit</span>
+            </button>
+          </div>
+          <div class="stat-value highlight-red" id="targetDateDisplay">22 Feb 2027</div>
           <div class="stat-sub" id="daysLeftCountdown">Calculating days remaining...</div>
         </div>
 
@@ -100,7 +106,7 @@
       <!-- Quick Jump Buttons -->
       <div class="quick-jumps">
         <button id="todayBtn" class="btn btn-sm btn-ghost">Today</button>
-        <button id="targetMonthBtn" class="btn btn-sm btn-target">Go to Feb 2027 🎯</button>
+        <button id="targetMonthBtn" class="btn btn-sm btn-target">Go to Target 🎯</button>
       </div>
 
       <!-- View Switcher -->
@@ -192,6 +198,38 @@
         <div class="modal-footer">
           <button id="saveNotesBtn" class="btn btn-primary">Save Notes</button>
           <button id="modalCloseActionBtn" class="btn btn-ghost">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Set Target Date Modal -->
+    <div id="targetModal" class="modal-backdrop" aria-hidden="true">
+      <div class="modal-content target-modal-content" role="dialog" aria-modal="true" aria-labelledby="targetModalTitle">
+        <button id="closeTargetModalBtn" class="modal-close-btn" aria-label="Close dialog">&times;</button>
+        <div class="modal-header">
+          <div class="modal-status-badge" style="background:var(--target-gold-bg);color:#b45309;font-weight:800;">Target Goal</div>
+          <h3 id="targetModalTitle">Set Target Deadline</h3>
+          <p class="modal-countdown-sub">Choose your target milestone date. You can update this anytime as your goals evolve!</p>
+        </div>
+
+        <div class="target-form-body">
+          <label for="targetDateInput" class="form-label">Target Milestone Date</label>
+          <input type="date" id="targetDateInput" class="target-date-input">
+
+          <div class="presets-section">
+            <span class="presets-title">Quick Presets:</span>
+            <div class="preset-buttons">
+              <button type="button" class="btn-preset" data-preset="2027-02-22">22 Feb 2027 (Default)</button>
+              <button type="button" class="btn-preset" data-preset="end-year">End of Year</button>
+              <button type="button" class="btn-preset" data-preset="6m">+6 Months</button>
+              <button type="button" class="btn-preset" data-preset="1y">+1 Year</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="saveTargetBtn" class="btn btn-primary">Save Target Date</button>
+          <button id="cancelTargetBtn" class="btn btn-ghost">Cancel</button>
         </div>
       </div>
     </div>

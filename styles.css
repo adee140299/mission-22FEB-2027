@@ -259,6 +259,39 @@ body {
   border-color: rgba(245, 158, 11, 0.35);
 }
 
+.stat-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.btn-subtle-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+[data-theme="dark"] .btn-subtle-edit {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-subtle-edit:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--primary-subtle);
+  transform: translateY(-1px);
+}
+
 .stat-label {
   font-size: 0.8rem;
   font-weight: 700;
@@ -1197,6 +1230,89 @@ body {
   margin-top: 24px;
   padding-top: 16px;
   border-top: 1px solid var(--border-subtle);
+}
+
+/* Target Date Modal */
+.target-modal-content {
+  max-width: 460px;
+}
+
+.target-form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.form-label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.target-date-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: var(--font-main);
+  background: var(--bg-card-subtle);
+  color: var(--text-main);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: var(--transition);
+}
+
+.target-date-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.presets-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.presets-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.preset-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn-preset {
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 999px;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-preset:hover {
+  background: var(--primary-subtle);
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.btn-preset.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
 }
 
 /* Confetti Canvas */

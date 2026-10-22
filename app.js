@@ -1,22 +1,20 @@
 /**
- * Target: 22 Feb 2027 | Habit & Task Cross-Off Calendar
- * Full client-side application with persistence, audio synthesis, and progress analytics.
+ * Target Mission Calendar | Habit & Task Cross-Off
+ * Full client-side application with dynamic targets, persistence, audio synthesis, and progress analytics.
  */
 
 (function () {
   'use strict';
 
   // Constants
-  const STORAGE_KEY = 'target_22feb2027_data';
-  const TARGET_YEAR = 2027;
-  const TARGET_MONTH = 1; // 0-indexed: 1 = February
-  const TARGET_DAY = 22;
-  const TARGET_DATE = new Date(TARGET_YEAR, TARGET_MONTH, TARGET_DAY, 23, 59, 59);
+  const STORAGE_KEY = 'target_mission_calendar_data';
+  const DEFAULT_TARGET_DATE = '2027-02-22';
 
   // Initial State
   let state = {
     currentYear: new Date().getFullYear(),
     currentMonth: new Date().getMonth(),
+    targetDate: DEFAULT_TARGET_DATE, // 'YYYY-MM-DD'
     activeView: 'month', // 'month' | 'wall'
     soundEnabled: true,
     theme: 'light',
@@ -45,6 +43,10 @@
   const wallMonthsContainer = document.getElementById('wallMonthsContainer');
 
   // Stats Elements
+  const targetCard = document.getElementById('targetCard');
+  const editTargetBtn = document.getElementById('editTargetBtn');
+  const targetDateDisplay = document.getElementById('targetDateDisplay');
+  const subtitleTargetText = document.getElementById('subtitleTargetText');
   const daysLeftCountdown = document.getElementById('daysLeftCountdown');
   const completedDaysCount = document.getElementById('completedDaysCount');
   const completionRateText = document.getElementById('completionRateText');
@@ -54,7 +56,14 @@
   const progressStatsText = document.getElementById('progressStatsText');
   const progressPercentageText = document.getElementById('progressPercentageText');
 
-  // Modal Elements
+  // Target Modal Elements
+  const targetModal = document.getElementById('targetModal');
+  const closeTargetModalBtn = document.getElementById('closeTargetModalBtn');
+  const cancelTargetBtn = document.getElementById('cancelTargetBtn');
+  const saveTargetBtn = document.getElementById('saveTargetBtn');
+  const targetDateInput = document.getElementById('targetDateInput');
+
+  // Day Details Modal Elements
   const dayModal = document.getElementById('dayModal');
   const closeModalBtn = document.getElementById('closeModalBtn');
   const modalCloseActionBtn = document.getElementById('modalCloseActionBtn');
@@ -135,11 +144,13 @@
      ========================================================================== */
   function loadData() {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      // Check both keys for backward compatibility
+      const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('target_22feb2027_data');
       if (saved) {
         const parsed = JSON.parse(saved);
         state.crossedDates = parsed.crossedDates || {};
         state.dayDetails = parsed.dayDetails || {};
+        if (parsed.targetDate) state.targetDate = parsed.targetDate;
         if (parsed.soundEnabled !== undefined) state.soundEnabled = parsed.soundEnabled;
         if (parsed.theme) state.theme = parsed.theme;
       }
@@ -158,6 +169,7 @@
   function saveData() {
     try {
       const dataToSave = {
+        targetDate: state.targetDate,
         crossedDates: state.crossedDates,
         dayDetails: state.dayDetails,
         soundEnabled: state.soundEnabled,
@@ -214,13 +226,13 @@
     return new Date(y, m - 1, d);
   }
 
-  function isDateLocked(year, month, day) {
-    const date = new Date(year, month, day, 0, 0, 0);
-    return date.getTime() > TARGET_DATE.getTime();
+  function getTargetDateObj() {
+    const [y, m, d] = (state.targetDate || DEFAULT_TARGET_DATE).split('-').map(Number);
+    return new Date(y, m - 1, d, 23, 59, 59);
   }
 
   function isTargetDate(year, month, day) {
-    return year === TARGET_YEAR && month === TARGET_MONTH && day === TARGET_DAY;
+    return formatDateKey(year, month, day) === state.targetDate;
   }
 
   function isToday(year, month, day) {
@@ -232,18 +244,30 @@
     );
   }
 
+  function formatDisplayDate(dateKey) {
+    if (!dateKey) return '';
+    const [y, m, d] = dateKey.split('-').map(Number);
+    return `${d} ${MONTH_NAMES[m - 1].slice(0, 3)} ${y}`;
+  }
+
+  function formatFullTargetDate(dateKey) {
+    if (!dateKey) return '';
+    const [y, m, d] = dateKey.split('-').map(Number);
+    return `${d} ${MONTH_NAMES[m - 1]} ${y}`;
+  }
+
   /* ==========================================================================
      Calendar Month View Rendering
      ========================================================================== */
   function renderCalendar() {
     calendarTitle.textContent = `${MONTH_NAMES[state.currentMonth]} ${state.currentYear}`;
 
-    // Restrict navigation boundaries (Jan 2025 - Feb 2027)
+    // Navigation bounds (allow navigating freely from 2024 to 2035)
     if (prevBtn) {
-      prevBtn.disabled = (state.currentYear <= 2025 && state.currentMonth <= 0);
+      prevBtn.disabled = (state.currentYear <= 2024);
     }
     if (nextBtn) {
-      nextBtn.disabled = (state.currentYear >= TARGET_YEAR && state.currentMonth >= TARGET_MONTH);
+      nextBtn.disabled = (state.currentYear >= 2035);
     }
 
     // Clear days
@@ -261,18 +285,16 @@
       const prevMonth = state.currentMonth === 0 ? 11 : state.currentMonth - 1;
       const prevYear = state.currentMonth === 0 ? state.currentYear - 1 : state.currentYear;
       const dateKey = formatDateKey(prevYear, prevMonth, prevDayNum);
-      const isLocked = isDateLocked(prevYear, prevMonth, prevDayNum);
 
-      const cell = createDayCell(prevYear, prevMonth, prevDayNum, dateKey, true, isLocked);
+      const cell = createDayCell(prevYear, prevMonth, prevDayNum, dateKey, true);
       calendarDaysGrid.appendChild(cell);
     }
 
     // Current month days
     for (let day = 1; day <= daysInMonth; day++) {
       const dateKey = formatDateKey(state.currentYear, state.currentMonth, day);
-      const isLocked = isDateLocked(state.currentYear, state.currentMonth, day);
 
-      const cell = createDayCell(state.currentYear, state.currentMonth, day, dateKey, false, isLocked);
+      const cell = createDayCell(state.currentYear, state.currentMonth, day, dateKey, false);
       calendarDaysGrid.appendChild(cell);
     }
 
@@ -283,14 +305,13 @@
       const nextMonth = state.currentMonth === 11 ? 0 : state.currentMonth + 1;
       const nextYear = state.currentMonth === 11 ? state.currentYear + 1 : state.currentYear;
       const dateKey = formatDateKey(nextYear, nextMonth, i);
-      const isLocked = isDateLocked(nextYear, nextMonth, i);
 
-      const cell = createDayCell(nextYear, nextMonth, i, dateKey, true, isLocked);
+      const cell = createDayCell(nextYear, nextMonth, i, dateKey, true);
       calendarDaysGrid.appendChild(cell);
     }
   }
 
-  function createDayCell(year, month, day, dateKey, isOtherMonth, isLocked) {
+  function createDayCell(year, month, day, dateKey, isOtherMonth) {
     const cell = document.createElement('div');
     cell.className = 'day-cell';
     cell.dataset.dateKey = dateKey;
@@ -298,7 +319,6 @@
     if (isOtherMonth) cell.classList.add('other-month');
     if (isToday(year, month, day)) cell.classList.add('today');
     if (isTargetDate(year, month, day)) cell.classList.add('target-day');
-    if (isLocked) cell.classList.add('locked');
 
     const isCrossed = !!state.crossedDates[dateKey];
     if (isCrossed) cell.classList.add('crossed');
@@ -324,21 +344,16 @@
         </svg>
       </div>
       <div class="day-bottom-row">
-        ${isTargetDate(year, month, day) ? '<span class="task-preview" style="color:var(--target-gold);font-weight:700;">Final Day</span>' : (hasNotesOrTasks && dayData.tasks && dayData.tasks.length ? `<span class="task-preview">${dayData.tasks.filter(t=>t.done).length}/${dayData.tasks.length} tasks</span>` : '')}
+        ${isTargetDate(year, month, day) ? '<span class="task-preview" style="color:var(--target-gold);font-weight:700;">Target Day</span>' : (hasNotesOrTasks && dayData.tasks && dayData.tasks.length ? `<span class="task-preview">${dayData.tasks.filter(t=>t.done).length}/${dayData.tasks.length} tasks</span>` : '')}
       </div>
     `;
 
-    // Click on the cell toggles the Red Cross directly (fast habit check-off)
+    // Click on the cell toggles the Red Cross directly (fast habit check-off for ANY date)
     cell.addEventListener('click', (e) => {
       // If user clicked the small edit button, open modal instead
       if (e.target.closest('.open-modal-trigger')) {
         e.stopPropagation();
         openDayModal(dateKey, year, month, day);
-        return;
-      }
-
-      if (isLocked) {
-        showToast('This date is after the mission deadline (22 Feb 2027)');
         return;
       }
 
@@ -389,18 +404,17 @@
   }
 
   /* ==========================================================================
-     Wall / Roadmap View (All months up to 22 Feb 2027)
+     Wall / Roadmap View (All months up to and beyond target)
      ========================================================================== */
   function renderWallRoadmap() {
     wallMonthsContainer.innerHTML = '';
 
-    // Start from January 2025 or current year through February 2027
-    const startYear = Math.min(new Date().getFullYear(), 2026);
-    const endYear = TARGET_YEAR;
+    const startYear = Math.min(new Date().getFullYear(), 2025);
+    const targetObj = getTargetDateObj();
+    const endYear = Math.max(targetObj.getFullYear(), new Date().getFullYear()) + 1;
 
     for (let y = startYear; y <= endYear; y++) {
-      const maxM = (y === TARGET_YEAR) ? TARGET_MONTH : 11;
-      for (let m = 0; m <= maxM; m++) {
+      for (let m = 0; m <= 11; m++) {
         const miniCard = createMiniMonthCard(y, m);
         wallMonthsContainer.appendChild(miniCard);
       }
@@ -416,11 +430,9 @@
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
     let crossedInMonth = 0;
-    let totalEligibleDays = 0;
+    const totalEligibleDays = daysInMonth;
 
     for (let d = 1; d <= daysInMonth; d++) {
-      const isLocked = isDateLocked(year, month, d);
-      if (!isLocked) totalEligibleDays++;
       const key = formatDateKey(year, month, d);
       if (state.crossedDates[key]) crossedInMonth++;
     }
@@ -448,7 +460,6 @@
     // Month days
     for (let d = 1; d <= daysInMonth; d++) {
       const key = formatDateKey(year, month, d);
-      const isLocked = isDateLocked(year, month, d);
       const isTarget = isTargetDate(year, month, d);
       const isCurToday = isToday(year, month, d);
       const isCrossed = !!state.crossedDates[key];
@@ -458,13 +469,11 @@
       miniDay.textContent = d;
       miniDay.title = `${MONTH_NAMES[month]} ${d}, ${year}`;
 
-      if (isLocked) miniDay.classList.add('locked');
       if (isTarget) miniDay.classList.add('target-day');
       if (isCurToday) miniDay.classList.add('today');
       if (isCrossed) miniDay.classList.add('crossed');
 
       miniDay.addEventListener('click', () => {
-        if (isLocked) return;
         toggleDateCross(key, null, year, month, d);
         miniDay.classList.toggle('crossed');
         // Update header progress pill
@@ -482,19 +491,27 @@
      Stats & Analytics Calculation
      ========================================================================== */
   function updateStats() {
-    // 1. Days remaining until 22 Feb 2027
+    const targetObj = getTargetDateObj();
     const now = new Date();
     const todayZero = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const targetZero = new Date(TARGET_YEAR, TARGET_MONTH, TARGET_DAY);
+    const targetZero = new Date(targetObj.getFullYear(), targetObj.getMonth(), targetObj.getDate());
     const msDiff = targetZero.getTime() - todayZero.getTime();
     const daysLeft = Math.ceil(msDiff / (1000 * 60 * 60 * 24));
+
+    // Update target card and subtitle display
+    if (targetDateDisplay) {
+      targetDateDisplay.textContent = formatDisplayDate(state.targetDate);
+    }
+    if (subtitleTargetText) {
+      subtitleTargetText.textContent = formatFullTargetDate(state.targetDate);
+    }
 
     if (daysLeft > 0) {
       daysLeftCountdown.textContent = `${daysLeft} days remaining`;
     } else if (daysLeft === 0) {
       daysLeftCountdown.textContent = `Target day is TODAY! 🎯`;
     } else {
-      daysLeftCountdown.textContent = `Mission completed! 🏆`;
+      daysLeftCountdown.textContent = `${Math.abs(daysLeft)} days past target 🚀 (Set new target!)`;
     }
 
     // 2. Count crossed dates
@@ -503,8 +520,6 @@
     completedDaysCount.textContent = totalCrossed;
 
     // 3. Mission Completion Calculation
-    // Total mission span from a reasonable starting reference (e.g. 1 Jan 2025 or today to 22 Feb 2027)
-    // Let's compute remaining days from today plus crossed days
     const totalTargetDaysEstimate = Math.max(totalCrossed + Math.max(0, daysLeft), 1);
     const percentage = Math.min(100, Math.round((totalCrossed / totalTargetDaysEstimate) * 100));
 
@@ -531,11 +546,9 @@
   function calculateStreaks(crossedKeys) {
     if (crossedKeys.length === 0) return { current: 0, best: 0 };
 
-    // Sort keys chronologically
     const sorted = [...crossedKeys].sort();
     const dateSet = new Set(sorted);
 
-    // Calculate best streak
     let best = 0;
     let tempStreak = 0;
     let prevDate = null;
@@ -556,7 +569,6 @@
       prevDate = cur;
     }
 
-    // Calculate current streak
     let current = 0;
     const now = new Date();
     const todayKey = formatDateKey(now.getFullYear(), now.getMonth(), now.getDate());
@@ -587,6 +599,59 @@
   }
 
   /* ==========================================================================
+     Target Date Modal (Set New Target)
+     ========================================================================== */
+  function openTargetModal() {
+    targetDateInput.value = state.targetDate;
+    targetModal.classList.add('active');
+    targetModal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeTargetModal() {
+    targetModal.classList.remove('active');
+    targetModal.setAttribute('aria-hidden', 'true');
+  }
+
+  function saveNewTarget() {
+    const val = targetDateInput.value;
+    if (!val) {
+      showToast('Please select a valid date');
+      return;
+    }
+
+    state.targetDate = val;
+    saveData();
+    renderCalendar();
+    if (state.activeView === 'wall') {
+      renderWallRoadmap();
+    }
+    closeTargetModal();
+    showToast(`Target deadline updated to ${formatDisplayDate(val)}! 🎯`);
+  }
+
+  function applyPreset(presetType) {
+    const now = new Date();
+    let newDateStr = '';
+
+    if (presetType === '2027-02-22') {
+      newDateStr = '2027-02-22';
+    } else if (presetType === 'end-year') {
+      const year = now.getFullYear();
+      newDateStr = `${year}-12-31`;
+    } else if (presetType === '6m') {
+      const d = new Date(now.getFullYear(), now.getMonth() + 6, now.getDate());
+      newDateStr = formatDateKey(d.getFullYear(), d.getMonth(), d.getDate());
+    } else if (presetType === '1y') {
+      const d = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
+      newDateStr = formatDateKey(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+
+    if (newDateStr) {
+      targetDateInput.value = newDateStr;
+    }
+  }
+
+  /* ==========================================================================
      Day Detail & Task Modal
      ========================================================================== */
   function openDayModal(dateKey, year, month, day) {
@@ -597,14 +662,14 @@
 
     modalDateTitle.textContent = fullDateText;
 
-    // Sub-info: Countdown or relative to target
-    const targetDiff = Math.ceil((TARGET_DATE - dateObj) / (1000 * 60 * 60 * 24));
+    const targetObj = getTargetDateObj();
+    const targetDiff = Math.ceil((targetObj - dateObj) / (1000 * 60 * 60 * 24));
     if (isTargetDate(year, month, day)) {
-      modalSubInfo.textContent = '🌟 This is the Grand Target Deadline Date!';
+      modalSubInfo.textContent = '🌟 This is your Target Milestone Date!';
     } else if (targetDiff > 0) {
-      modalSubInfo.textContent = `${targetDiff} days before the 22 Feb 2027 milestone`;
+      modalSubInfo.textContent = `${targetDiff} days before target milestone (${formatDisplayDate(state.targetDate)})`;
     } else {
-      modalSubInfo.textContent = 'Date beyond target deadline';
+      modalSubInfo.textContent = `${Math.abs(targetDiff)} days after target milestone (${formatDisplayDate(state.targetDate)})`;
     }
 
     refreshModalUI();
@@ -617,7 +682,6 @@
     dayModal.classList.remove('active');
     dayModal.setAttribute('aria-hidden', 'true');
     state.selectedDateStr = null;
-    // Re-render month cell in case tasks/notes changed
     renderCalendar();
   }
 
@@ -627,7 +691,6 @@
 
     const isCrossed = !!state.crossedDates[key];
 
-    // Status Badge
     if (isCrossed) {
       modalStatusBadge.textContent = 'Completed ❌';
       modalStatusBadge.className = 'modal-status-badge completed';
@@ -640,7 +703,6 @@
       modalCrossToggleText.textContent = 'Mark Day as Done (Slash Red X)';
     }
 
-    // Load Tasks & Notes
     const data = state.dayDetails[key] || { tasks: [], notes: '' };
     dayNotesInput.value = data.notes || '';
 
@@ -729,7 +791,7 @@
   }
 
   /* ==========================================================================
-     Confetti Animation Engine (Lightweight & Zero-Dependency)
+     Confetti Animation Engine
      ========================================================================== */
   function resizeConfettiCanvas() {
     confettiCanvas.width = window.innerWidth;
@@ -767,7 +829,7 @@
     for (let p of confettiParticles) {
       p.x += p.velX;
       p.y += p.velY;
-      p.velY += 0.45; // gravity
+      p.velY += 0.45;
       p.rotation += p.rotSpeed;
       p.life++;
 
@@ -799,8 +861,9 @@
      ========================================================================== */
   function exportBackup() {
     const backupData = {
-      version: '1.0',
+      version: '1.2',
       exportedAt: new Date().toISOString(),
+      targetDate: state.targetDate,
       crossedDates: state.crossedDates,
       dayDetails: state.dayDetails,
       soundEnabled: state.soundEnabled,
@@ -830,6 +893,7 @@
         if (imported.crossedDates) {
           state.crossedDates = imported.crossedDates;
           state.dayDetails = imported.dayDetails || {};
+          if (imported.targetDate) state.targetDate = imported.targetDate;
           if (imported.soundEnabled !== undefined) state.soundEnabled = imported.soundEnabled;
           if (imported.theme) applyTheme(imported.theme);
 
@@ -845,7 +909,7 @@
       }
     };
     reader.readAsText(file);
-    e.target.value = ''; // Reset file input
+    e.target.value = '';
   }
 
   function showToast(message) {
@@ -880,7 +944,7 @@
      Event Listeners & View Switches
      ========================================================================== */
   function setupEventListeners() {
-    // Navigation
+    // Month Navigation
     prevBtn.addEventListener('click', () => {
       if (state.currentMonth === 0) {
         state.currentMonth = 11;
@@ -909,9 +973,31 @@
     });
 
     targetMonthBtn.addEventListener('click', () => {
-      state.currentYear = TARGET_YEAR;
-      state.currentMonth = TARGET_MONTH;
+      const targetObj = getTargetDateObj();
+      state.currentYear = targetObj.getFullYear();
+      state.currentMonth = targetObj.getMonth();
       renderCalendar();
+    });
+
+    // Target Date Edit Handlers
+    targetCard.addEventListener('click', openTargetModal);
+    editTargetBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openTargetModal();
+    });
+    closeTargetModalBtn.addEventListener('click', closeTargetModal);
+    cancelTargetBtn.addEventListener('click', closeTargetModal);
+    saveTargetBtn.addEventListener('click', saveNewTarget);
+
+    targetModal.addEventListener('click', (e) => {
+      if (e.target === targetModal) closeTargetModal();
+    });
+
+    // Preset buttons
+    document.querySelectorAll('.btn-preset').forEach(btn => {
+      btn.addEventListener('click', () => {
+        applyPreset(btn.dataset.preset);
+      });
     });
 
     // Theme & Sound
@@ -941,7 +1027,7 @@
       renderWallRoadmap();
     });
 
-    // Modal Events
+    // Day Details Modal Events
     closeModalBtn.addEventListener('click', closeModal);
     modalCloseActionBtn.addEventListener('click', closeModal);
     dayModal.addEventListener('click', (e) => {
@@ -971,8 +1057,9 @@
 
     // Keyboard shortcuts
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && dayModal.classList.contains('active')) {
-        closeModal();
+      if (e.key === 'Escape') {
+        if (targetModal.classList.contains('active')) closeTargetModal();
+        if (dayModal.classList.contains('active')) closeModal();
       }
     });
   }
