@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient (Deep Modern Obsidian/Slate) -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+
+    <!-- Calendar Card Gradient -->
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f1f5f9"/>
+    </linearGradient>
+
+    <!-- Calendar Top Bar Gradient (Vibrant Crimson) -->
+    <linearGradient id="crimsonBar" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#b91c1c"/>
+    </linearGradient>
+
+    <!-- Red Cross Marker Gradient & Glow -->
+    <linearGradient id="markerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff3b30"/>
+      <stop offset="50%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+
+    <!-- Gold Accent Star/Badge -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+
+    <!-- Drop Shadows -->
+    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+
+    <filter id="crossGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#ef4444" flood-opacity="0.55"/>
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#b91c1c" flood-opacity="0.8"/>
+    </filter>
+
+    <filter id="ringShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+
+    <!-- Clip Path for Calendar Header -->
+    <clipPath id="cardClip">
+      <rect x="88" y="100" width="336" height="320" rx="36" ry="36"/>
+    </clipPath>
+  </defs>
+
+  <!-- App Icon Base: Sleek Apple-style Squircle with Rim Highlight -->
+  <rect x="16" y="16" width="480" height="480" rx="108" ry="108" fill="url(#bgGrad)"/>
+  <rect x="16" y="16" width="480" height="480" rx="108" ry="108" fill="none" stroke="#334155" stroke-width="3" opacity="0.6"/>
+
+  <!-- Calendar Outer Card with Depth Shadow -->
+  <g filter="url(#cardShadow)">
+    <rect x="88" y="100" width="336" height="320" rx="36" ry="36" fill="url(#cardGrad)"/>
+  </g>
+
+  <!-- Calendar Content Clipped to Rounded Card -->
+  <g clip-path="url(#cardClip)">
+    <!-- Header Banner (Crimson Red) -->
+    <rect x="88" y="100" width="336" height="96" fill="url(#crimsonBar)"/>
+
+    <!-- Subtle Month/Goal Header Text in Banner -->
+    <text x="256" y="158" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="28" font-weight="800" fill="#ffffff" letter-spacing="4" text-anchor="middle">FEB 2027</text>
+
+    <!-- Calendar Grid Lines / Dots Background -->
+    <g opacity="0.12" stroke="#475569" stroke-width="1.5">
+      <line x1="88" y1="250" x2="424" y2="250"/>
+      <line x1="88" y1="310" x2="424" y2="310"/>
+      <line x1="88" y1="370" x2="424" y2="370"/>
+      <line x1="172" y1="196" x2="172" y2="420"/>
+      <line x1="256" y1="196" x2="256" y2="420"/>
+      <line x1="340" y1="196" x2="340" y2="420"/>
+    </g>
+
+    <!-- Large Elegant Date "22" in Center -->
+    <text x="256" y="328" font-family="'JetBrains Mono', -apple-system, monospace" font-size="110" font-weight="800" fill="#0f172a" text-anchor="middle" letter-spacing="-4" opacity="0.88">22</text>
+  </g>
+
+  <!-- Realistic Metallic Calendar Rings / Binder Clips -->
+  <!-- Left Ring -->
+  <g filter="url(#ringShadow)">
+    <rect x="156" y="74" width="24" height="52" rx="12" ry="12" fill="#e2e8f0"/>
+    <rect x="160" y="76" width="16" height="48" rx="8" ry="8" fill="#cbd5e1"/>
+    <rect x="164" y="78" width="6" height="44" rx="3" ry="3" fill="#ffffff" opacity="0.8"/>
+  </g>
+  <!-- Right Ring -->
+  <g filter="url(#ringShadow)">
+    <rect x="332" y="74" width="24" height="52" rx="12" ry="12" fill="#e2e8f0"/>
+    <rect x="336" y="76" width="16" height="48" rx="8" ry="8" fill="#cbd5e1"/>
+    <rect x="340" y="78" width="6" height="44" rx="3" ry="3" fill="#ffffff" opacity="0.8"/>
+  </g>
+
+  <!-- THE ICONIC BOLD RED MARKER CROSS (Slash 1 & Slash 2) -->
+  <g filter="url(#crossGlow)">
+    <!-- First Stroke: Top-Left to Bottom-Right -->
+    <line x1="130" y1="205" x2="382" y2="400" stroke="url(#markerGrad)" stroke-width="40" stroke-linecap="round"/>
+    <line x1="130" y1="205" x2="382" y2="400" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.32"/>
+
+    <!-- Second Stroke: Top-Right to Bottom-Left -->
+    <line x1="382" y1="205" x2="130" y2="400" stroke="url(#markerGrad)" stroke-width="40" stroke-linecap="round"/>
+    <line x1="382" y1="205" x2="130" y2="400" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.25"/>
+  </g>
+
+  <!-- Tiny Target Milestone Star Badge in Bottom Corner -->
+  <g transform="translate(372, 372)" filter="url(#cardShadow)">
+    <circle cx="0" cy="0" r="28" fill="url(#goldGrad)"/>
+    <circle cx="0" cy="0" r="25" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.6"/>
+    <!-- Target Bullseye / Star -->
+    <circle cx="0" cy="0" r="14" fill="#ffffff"/>
+    <circle cx="0" cy="0" r="7" fill="#dc2626"/>
+  </g>
+</svg>

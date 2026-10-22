@@ -1,10 +1,13 @@
-const CACHE_NAME = 'mission-calendar-v1.3';
+const CACHE_NAME = 'mission-calendar-v1.4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './styles.css',
   './app.js',
   './manifest.json',
+  './assets/logo.svg',
+  './assets/favicon.svg',
+  './assets/favicon-32x32.png',
   './assets/icon-192.png',
   './assets/icon-512.png',
   './assets/apple-touch-icon.png'

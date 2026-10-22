@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="favBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+    <linearGradient id="favRed" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff3b30"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+    <clipPath id="favCardClip">
+      <rect x="8" y="10" width="48" height="46" rx="8" ry="8"/>
+    </clipPath>
+  </defs>
+
+  <!-- Dark Rounded Squircle Base -->
+  <rect x="2" y="2" width="60" height="60" rx="15" ry="15" fill="url(#favBg)"/>
+
+  <!-- Calendar Page -->
+  <rect x="8" y="10" width="48" height="46" rx="8" ry="8" fill="#ffffff"/>
+
+  <!-- Header Strip -->
+  <g clip-path="url(#favCardClip)">
+    <rect x="8" y="10" width="48" height="14" fill="#dc2626"/>
+  </g>
+
+  <!-- Binder Rings -->
+  <rect x="18" y="7" width="4" height="8" rx="2" ry="2" fill="#e2e8f0"/>
+  <rect x="42" y="7" width="4" height="8" rx="2" ry="2" fill="#e2e8f0"/>
+
+  <!-- Date '22' in Background of Card -->
+  <text x="32" y="44" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="900" fill="#94a3b8" text-anchor="middle" opacity="0.6">22</text>
+
+  <!-- PUNCHY VIBRANT RED CROSS (High visibility at small sizes) -->
+  <line x1="16" y1="26" x2="48" y2="50" stroke="url(#favRed)" stroke-width="7" stroke-linecap="round"/>
+  <line x1="48" y1="26" x2="16" y2="50" stroke="url(#favRed)" stroke-width="7" stroke-linecap="round"/>
+</svg>
