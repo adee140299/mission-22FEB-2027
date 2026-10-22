@@ -238,6 +238,14 @@
   function renderCalendar() {
     calendarTitle.textContent = `${MONTH_NAMES[state.currentMonth]} ${state.currentYear}`;
 
+    // Restrict navigation boundaries (Jan 2025 - Feb 2027)
+    if (prevBtn) {
+      prevBtn.disabled = (state.currentYear <= 2025 && state.currentMonth <= 0);
+    }
+    if (nextBtn) {
+      nextBtn.disabled = (state.currentYear >= TARGET_YEAR && state.currentMonth >= TARGET_MONTH);
+    }
+
     // Clear days
     calendarDaysGrid.innerHTML = '';
 
