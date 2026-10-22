@@ -82,3 +82,4 @@ You can bookmark this URL on your phone or laptop and cross off your days every 
 
 ## 📱 Mobile Friendly
 This web app is fully responsive and supports touch screens. On iPhone (Safari) or Android (Chrome), you can tap **Share** > **Add to Home Screen** to use it just like a native app.
+
