@@ -27,3 +27,4 @@ if [ -f "$DIR/assets/AppIcon.icns" ]; then
 fi
 
 echo "✅ Mission Calendar.app successfully created at: $DIR/Mission Calendar.app"
+
