@@ -6,6 +6,11 @@ A habit and milestone countdown calendar built with pure **HTML, CSS, and Vanill
 
 ## ✨ Features
 
+- **💻 Standalone Native macOS App (`Mission Calendar.app`):** Double-click to launch directly from your Desktop or Dock in a dedicated app window — no browser tabs, no URL typing!
+- **📲 Progressive Web App (PWA) Installable:**
+  - One-click **"Install App"** button right in the header bar.
+  - Installs to Launchpad and Dock on macOS, Start menu on Windows, or Home Screen on iPhone and Android.
+  - Works 100% offline with full service worker caching.
 - **❌ Bold Red Marker Cross:** Click any day to slash it with an authentic red marker cross (`✕`) when you finish your daily mission.
 - **🎯 Target Deadline Countdown (Default: 22 Feb 2027):** Live tracker showing days remaining until your deadline.
 - **🚀 Flexible Horizons:** Allows crossing off days beyond the deadline without restriction, and lets you set a new target date anytime!

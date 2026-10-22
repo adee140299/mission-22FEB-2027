@@ -944,6 +944,42 @@
      Event Listeners & View Switches
      ========================================================================== */
   function setupEventListeners() {
+    // PWA Service Worker & Install Flow
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+
+    let deferredPrompt = null;
+    const installAppBtn = document.getElementById('installAppBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (installAppBtn) installAppBtn.style.display = 'inline-flex';
+    });
+
+    if (installAppBtn) {
+      installAppBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if (outcome === 'accepted') {
+            installAppBtn.style.display = 'none';
+          }
+          deferredPrompt = null;
+        } else {
+          showToast('To install: click your browser menu (⋮ / File) and select "Install" or "Add to Dock"');
+        }
+      });
+    }
+
+    window.addEventListener('appinstalled', () => {
+      if (installAppBtn) installAppBtn.style.display = 'none';
+      showToast('Mission Calendar app installed successfully! 🎉');
+    });
+
     // Month Navigation
     prevBtn.addEventListener('click', () => {
       if (state.currentMonth === 0) {

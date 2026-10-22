@@ -1,0 +1,21 @@
+{
+  "name": "mission-calendar-2027",
+  "version": "1.3.0",
+  "description": "Daily habit and mission calendar until 22 Feb 2027 and beyond",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "calendar",
+    "habit-tracker",
+    "seinfeld-chain",
+    "countdown",
+    "pwa"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.0.0"
+  }
+}

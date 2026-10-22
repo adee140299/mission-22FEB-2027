@@ -9,6 +9,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Permanent+Marker&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22><text y=%2226%22 font-size=%2224%22>❌</text></svg>">
+  <!-- PWA & Mobile Web App Meta -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#dc2626">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mission 2027">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 </head>
 <body>
   <div class="app-wrapper">
@@ -26,6 +33,10 @@
         </div>
 
         <div class="header-controls">
+          <button id="installAppBtn" class="btn btn-primary btn-install-app" title="Install as standalone application" style="display: none;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Install App</span>
+          </button>
           <button id="themeToggle" class="btn btn-secondary icon-btn" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
             <span class="theme-icon">🌙</span>
           </button>
