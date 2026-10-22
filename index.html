@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Target: 22 Feb 2027 | Habit & Task Cross-Off Calendar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Permanent+Marker&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22><text y=%2226%22 font-size=%2224%22>❌</text></svg>">
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Header Section -->
+    <header class="app-header">
+      <div class="header-main">
+        <div class="brand">
+          <div class="brand-icon">
+            <span class="x-mark-icon">✕</span>
+          </div>
+          <div>
+            <h1>Daily Mission Calendar</h1>
+            <p class="subtitle">Cross off every single day until <strong>22 February 2027</strong></p>
+          </div>
+        </div>
+
+        <div class="header-controls">
+          <button id="themeToggle" class="btn btn-secondary icon-btn" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button id="soundToggle" class="btn btn-secondary icon-btn" title="Toggle Marker Sound FX" aria-label="Toggle sound">
+            <span id="soundIcon">🔊</span>
+          </button>
+          <button id="exportBtn" class="btn btn-secondary" title="Backup your progress to a file">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Backup</span>
+          </button>
+          <label class="btn btn-secondary upload-label" title="Restore progress from backup file">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span>Restore</span>
+            <input type="file" id="importInput" accept=".json" style="display:none;">
+          </label>
+        </div>
+      </div>
+
+      <!-- Live Countdown & Stat Counters -->
+      <div class="stats-ribbon">
+        <div class="stat-card target-card">
+          <div class="stat-label">🎯 Target Deadline</div>
+          <div class="stat-value highlight-red">22 Feb 2027</div>
+          <div class="stat-sub" id="daysLeftCountdown">Calculating days remaining...</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">❌ Days Crossed Off</div>
+          <div class="stat-value" id="completedDaysCount">0</div>
+          <div class="stat-sub" id="completionRateText">0% of total mission</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">🔥 Current Streak</div>
+          <div class="stat-value" id="currentStreakCount">0 <span class="unit">days</span></div>
+          <div class="stat-sub" id="streakSub">Keep the chain unbroken!</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">🏆 Best Streak</div>
+          <div class="stat-value" id="bestStreakCount">0 <span class="unit">days</span></div>
+          <div class="stat-sub">Personal record</div>
+        </div>
+      </div>
+
+      <!-- Overall Mission Progress Bar -->
+      <div class="progress-container">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progressBarFill" style="width: 0%"></div>
+        </div>
+        <div class="progress-info">
+          <span id="progressStatsText">0 completed</span>
+          <span id="progressPercentageText">0%</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Calendar Controls Bar -->
+    <section class="calendar-toolbar">
+      <div class="nav-cluster">
+        <button id="prevBtn" class="btn btn-nav" aria-label="Previous Month">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="current-month-display">
+          <h2 id="calendarTitle">Month Year</h2>
+        </div>
+        <button id="nextBtn" class="btn btn-nav" aria-label="Next Month">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <!-- Quick Jump Buttons -->
+      <div class="quick-jumps">
+        <button id="todayBtn" class="btn btn-sm btn-ghost">Today</button>
+        <button id="targetMonthBtn" class="btn btn-sm btn-target">Go to Feb 2027 🎯</button>
+      </div>
+
+      <!-- View Switcher -->
+      <div class="view-switch-group">
+        <button id="monthViewBtn" class="view-btn active" data-view="month">Month View</button>
+        <button id="wallViewBtn" class="view-btn" data-view="wall">Wall Roadmap (All)</button>
+      </div>
+    </section>
+
+    <!-- Legend & Action Guide -->
+    <div class="interaction-tip">
+      <div class="tips-left">
+        <span class="tip-badge">💡 Tip</span>
+        <span>Click any date to <strong>slash it with a Red ❌</strong> when your tasks are completed! Click again to undo.</span>
+      </div>
+      <div class="legend-items">
+        <span class="legend-chip"><span class="legend-swatch crossed-swatch"></span> Crossed (Done)</span>
+        <span class="legend-chip"><span class="legend-swatch today-swatch"></span> Today</span>
+        <span class="legend-chip"><span class="legend-swatch target-swatch"></span> Target (Feb 22, 2027)</span>
+      </div>
+    </div>
+
+    <!-- Month Grid View Container -->
+    <main id="monthViewContainer" class="view-panel active">
+      <div class="calendar-board">
+        <!-- Weekday Headers -->
+        <div class="weekdays-grid">
+          <div class="weekday">Mon</div>
+          <div class="weekday">Tue</div>
+          <div class="weekday">Wed</div>
+          <div class="weekday">Thu</div>
+          <div class="weekday">Fri</div>
+          <div class="weekday weekend">Sat</div>
+          <div class="weekday weekend">Sun</div>
+        </div>
+
+        <!-- Days Grid -->
+        <div id="calendarDaysGrid" class="days-grid"></div>
+      </div>
+    </main>
+
+    <!-- Full Wall Roadmap View (Yearly/Continuous Wall of Days till 22 Feb 2027) -->
+    <main id="wallViewContainer" class="view-panel" style="display: none;">
+      <div class="wall-header-card">
+        <h3>Full Mission Roadmap (Until 22 Feb 2027)</h3>
+        <p>Continuous view of every month. Cross days off one by one and watch your progress unfold!</p>
+      </div>
+      <div id="wallMonthsContainer" class="wall-months-grid"></div>
+    </main>
+
+    <!-- Day Details & Task List Modal -->
+    <div id="dayModal" class="modal-backdrop" aria-hidden="true">
+      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalDateTitle">
+        <button id="closeModalBtn" class="modal-close-btn" aria-label="Close dialog">&times;</button>
+        <div class="modal-header">
+          <div class="modal-status-badge" id="modalStatusBadge">Incomplete</div>
+          <h3 id="modalDateTitle">February 22, 2027</h3>
+          <p class="modal-countdown-sub" id="modalSubInfo"></p>
+        </div>
+
+        <!-- Big Toggle Cross Button -->
+        <div class="modal-toggle-zone">
+          <button id="modalCrossToggleBtn" class="btn btn-huge-cross">
+            <span class="btn-cross-icon">✕</span>
+            <span id="modalCrossToggleText">Mark Day as Done (Slash Red X)</span>
+          </button>
+        </div>
+
+        <!-- Daily Tasks & Notes section -->
+        <div class="modal-tasks-section">
+          <div class="section-title-row">
+            <h4>Daily Tasks Completed</h4>
+            <span class="task-count-pill" id="taskCountPill">0 / 0</span>
+          </div>
+
+          <div class="add-task-form">
+            <input type="text" id="newTaskInput" placeholder="Add a specific task (e.g. Study 4 hrs, Workout, Code project)..." maxlength="150">
+            <button id="addTaskBtn" class="btn btn-secondary">Add</button>
+          </div>
+
+          <ul id="modalTasksList" class="tasks-list"></ul>
+
+          <div class="notes-block">
+            <label for="dayNotesInput">Daily Notes / Reflections</label>
+            <textarea id="dayNotesInput" rows="3" placeholder="Write any accomplishments, thoughts or reflections for this date..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="saveNotesBtn" class="btn btn-primary">Save Notes</button>
+          <button id="modalCloseActionBtn" class="btn btn-ghost">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Celebration Canvas for Confetti -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <p>Target Date: <strong>February 22, 2027</strong> • Designed for consistency & discipline</p>
+        <p class="footer-hint">All data saved locally in your browser. Use the <strong>Backup</strong> button anytime to export your file!</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
